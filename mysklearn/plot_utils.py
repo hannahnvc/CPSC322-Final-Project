@@ -20,7 +20,7 @@ def make_bar_graph_with_xy(x, y, title, x_label, y_label, size):
     plt.figure()
     plt.bar(x, y, align='center')
     plt.xticks(fontsize=size)
-    plt.xticks(rotation = 45)
+    plt.xticks(rotation = 90)
     plt.title(title)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
