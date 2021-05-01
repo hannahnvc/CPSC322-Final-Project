@@ -185,26 +185,33 @@ def frequency_diagram_plot(x, y, z, plt_name, x_label, y_label):
     plt.xticks(x, z, rotation=90, horizontalalignment="center") # locations, labels
     plt.show()
 
-def make_multiple_bar_graphs(a_lst_1, a_lst_2, title, x_label, y_label, attribute1, attribute2):
+def make_multiple_bar_graphs(vals, count1, counts2, title, x_label, y_label, attribute1, attribute2):
     # create the figure
     plt.figure()
-    lst1_vals, lst1_counts, lst1_ints = get_frequencies(sorted(a_lst_1))
-    lst2_vals, lst2_counts, lst2_ints = get_frequencies(sorted(a_lst_2))
 
-    X_axis = np.arange(len(lst1_vals))
+    X_axis = np.arange(len(vals))
   
-    plt.bar(X_axis - 0.2, lst1_counts, 0.4, label = attribute1)
-    plt.bar(X_axis + 0.2, lst2_counts, 0.4, label = attribute2)
+    plt.bar(X_axis - 0.2, count1, 0.4, label = attribute1)
+    plt.bar(X_axis + 0.2, counts2, 0.4, label = attribute2)
   
-    plt.xticks(X_axis, lst1_vals)
+    plt.xticks(X_axis, vals)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
-    # ax = plt.gca()
-    # spacing can be a tricky
-    # r1 = ax.bar(cutoffs_short, freq_1, 0.3, color="r")
-    # r2 = ax.bar(cutoffs_plus, freq_2, 0.3, color="b")
-    # ax.set_xticks(cutoffs_short)
-    # create a legend
-    # ax.legend((r1[0], r2[0]), (attribute1, attribute2), loc=2)
+def make_triple_bar_graphs(vals, count1, counts2, counts3, title, x_label, y_label, attribute1, attribute2, attribute3):
+    # create the figure
+    plt.figure()
+    X_axis = np.arange(len(vals))
+  
+    plt.bar(X_axis - 0.25, count1, 0.25, label = attribute1)
+    plt.bar(X_axis, counts2, 0.25, label = attribute2)
+    plt.bar(X_axis + 0.25, counts3, 0.25, label = attribute3)
+  
+    plt.xticks(X_axis, vals)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
