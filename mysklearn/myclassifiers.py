@@ -357,7 +357,7 @@ class MyRandomClassifier():
 
         return y_predicted
 
-class MyDecisionTreeClassifier:
+class MyDecisionTreeClassifier():
     """Represents a decision tree classifier.
 
     Attributes:
@@ -416,7 +416,7 @@ class MyDecisionTreeClassifier:
         available_attributes = self.header.copy() # python is pass object reference
         self.tree = myutils.tdidt(train, available_attributes, domain_dict, self.header)
 
-        print(self.tree)
+        # print(self.tree)
        
         
     def predict(self, X_test):

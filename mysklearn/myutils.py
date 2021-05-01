@@ -222,6 +222,67 @@ def remove_NA(column):
                     clean.append(i)
     return clean
 
+def reviews_to_categorical(table, index):
+    for row in table:
+        item = row[index]
+        if item >= 5000:
+            row[index] = 12
+        elif item >= 1000:
+            row[index] = 11
+        elif item >= 900:
+            row[index] = 10
+        elif item >= 800:
+            row[index] = 9
+        elif item >= 700:
+            row[index] = 8
+        elif item >= 600:
+            row[index] = 7
+        elif item >= 500:
+            row[index] = 6
+        elif item >= 400:
+            row[index] = 5
+        elif item >= 300:
+            row[index] = 4
+        elif item >= 200:
+            row[index] = 3
+        elif item >= 100:
+            row[index] = 2
+        else:
+            row[index] = 1
+
+def avg_votes_to_categorical(table, index):
+    for row in table:
+        item = row[index]
+        row[index] = math.floor(item)
+
+def num_ratings_to_categorical(table, index):
+    for row in table:
+        item = row[index]
+        if item >= 600000:
+            row[index] = 12
+        elif item >= 5000000:
+            row[index] = 11
+        elif item >= 4000000:
+            row[index] = 10
+        elif item >= 300000:
+            row[index] = 9
+        elif item >= 200000:
+            row[index] = 8
+        elif item >= 100000:
+            row[index] = 7
+        elif item >= 75000:
+            row[index] = 6
+        elif item >= 50000:
+            row[index] = 5
+        elif item >= 25000:
+            row[index] = 4
+        elif item >= 10000:
+            row[index] = 3
+        elif item >= 5000:
+            row[index] = 2
+        else:
+            row[index] = 1
+
 def convert_mpg_to_rating(table):
     column = table.get_column("mpg", False)
     column.sort()

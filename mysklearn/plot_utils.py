@@ -33,8 +33,8 @@ def get_frequencies(col):
     ints = []
     counter = 0
 
-    for value in col:
-        if value not in values:
+    for value in range(len(col)):
+        if col[value] not in values:
             # first time we have seen this value
             values.append(value)
             counts.append(1)
@@ -185,16 +185,16 @@ def frequency_diagram_plot(x, y, z, plt_name, x_label, y_label):
     plt.xticks(x, z, rotation=90, horizontalalignment="center") # locations, labels
     plt.show()
 
-def make_multiple_bar_graphs(vals, count1, counts2, title, x_label, y_label, attribute1, attribute2):
+def make_multiple_bar_graphs(val1, val2, count1, counts2, title, x_label, y_label, attribute1, attribute2):
     # create the figure
     plt.figure()
 
-    X_axis = np.arange(len(vals))
+    X_axis = np.arange(len(val1))
   
     plt.bar(X_axis - 0.2, count1, 0.4, label = attribute1)
     plt.bar(X_axis + 0.2, counts2, 0.4, label = attribute2)
   
-    plt.xticks(X_axis, vals)
+    plt.xticks(X_axis, val1)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
