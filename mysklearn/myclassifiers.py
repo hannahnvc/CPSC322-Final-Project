@@ -415,6 +415,8 @@ class MyDecisionTreeClassifier:
         # initial call to tdidt current instances is the whole table (train)
         available_attributes = self.header.copy() # python is pass object reference
         self.tree = myutils.tdidt(train, available_attributes, domain_dict, self.header)
+
+        print(self.tree)
        
         
     def predict(self, X_test):
