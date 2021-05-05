@@ -141,7 +141,32 @@ def stratified_kfold_cross_validation(X, y, n_splits=5):
             if j not in X_test_folds[i]:
                 X_train_folds[i].append(j)
 
-  
+def stratified_test_remainder(X, y, n_splits=3, shuffle=True):
+    # test set and remainder set are a list of indices 
+    test_set = []
+    remainder_set = []
+    # create dictionary where key is class label and value is empty list
+    y_dict = myutils.create_dictionary(y)
+    y_indices = copy.deepcopy(y_dict)
+    for key in y_indices:
+        y_indices[key] = []
+    # put indices in list according to their class in y
+    for i in range(len(X)):
+        y_indices[y[i]].append(i)
+
+    # shuffle the indices
+    for item in y_indices:
+        shuffled = random.shuffle(y_indices[item])
+        y_indices[item] = shuffled
+    
+    # put indices in sets with 1/3 in test and 2/3 in remainder 
+    for item in y_indices:
+        for i in range(len(y_indices[item]) / n_splits):
+            test_set.append(y_indices[item][i])
+        for i in range(len(y_indices[item]) / n_splits, len(y_indices[item])):
+            remainder_set.append(y_indices[item][i])
+    
+    return test_set, remainder_set
 
     return X_train_folds, X_test_folds
 

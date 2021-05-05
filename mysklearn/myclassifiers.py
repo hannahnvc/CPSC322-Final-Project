@@ -472,6 +472,29 @@ class MyRandomForest():
     def fit(self, X_train, y_train):
         self.y_train = y_train
         self.X_train = X_train
+        self.forest = []
+
+        DecisionTree = MyDecisionTreeClassifier()
+        test_set_indices, remainder_set_indices = myevaluation.stratified_test_remainder(X_train, y_train)
+
+        remainder_set = []
+        for item in remainder_set_indices:
+            remainder_set.append(X_train[item])
+
+        for i in range(N):
+            # get 67% of remainder set for sample
+            sample = myutils.compute_bootstrapped_sample(remainder_set)
+            X_sample, y_sample = myutils.separate_data_from_class(sample, class_label)
+             
+            # get remaining 33% for validation
+            validation = []
+            for item in remainder_set not in sample:
+                validation.append(item)
+
+            DecisionTree.fit(sample)
+            forest.append(DecisionTree.tree)
+        
+        return forest
 
     def predict(self, X_test):
         """Makes predictions for test instances in X_test.

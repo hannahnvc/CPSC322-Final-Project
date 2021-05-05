@@ -454,3 +454,30 @@ def tdidt_predict(header, tree, instance):
     else: # Leaf
         return tree[1] # label
 
+def compute_bootstrapped_sample(table):
+    n = len(table)
+    sample = []
+    for _ in range(n):
+        rand_index = random.randrange(0, n)
+        sample.append(table[rand_index])
+    return sample
+
+def compute_random_subset(values, num_values):
+    shuffled = values[:] # shallow copy 
+    random.shuffle(shuffled)
+    return sorted(shuffled[:num_values])
+
+def separate_data_from_class(table, class_index):
+    X = []
+    y = []
+    for row in table:
+        X_row = []
+        y_row = []
+        for i in range(len(row)):
+            if i == class_index:
+                y_row.append(row[i])
+            else:
+                X_row.append(row[i])
+        X.append(X_row)
+        y.append(y_row)
+    return X, y
