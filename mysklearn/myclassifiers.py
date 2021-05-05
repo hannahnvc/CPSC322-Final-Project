@@ -320,6 +320,7 @@ class MyZeroClassifier():
         Returns:
             y_predicted(list of obj): The predicted target y values (parallel to X_test)
         """
+        y_predicted = []
         count = myutils.create_dictionary(self.y_train)
         Keymax = max(count, key=count.get)
         # get key with max value
@@ -329,7 +330,9 @@ class MyZeroClassifier():
         for item in count:
             if count[item] == max_val:
                 max_lst.append(item)
-        y_predicted = random.choice(max_lst)
+        
+        for X in X_test:
+            y_predicted.append(random.choice(max_lst))
 
         return y_predicted
 
@@ -354,7 +357,9 @@ class MyRandomClassifier():
         Returns:
             y_predicted(list of obj): The predicted target y values (parallel to X_test)
         """
-        y_predicted = random.choice(self.y_train)
+        y_predicted = []
+        for X in X_test:
+            y_predicted.append(random.choice(self.y_train))
 
         return y_predicted
 
