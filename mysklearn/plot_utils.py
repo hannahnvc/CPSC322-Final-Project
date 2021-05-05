@@ -46,6 +46,8 @@ def get_frequencies(col):
 
     return values, counts, ints
 
+
+
 def make_pie_chart_with_comp(attributes, frequency, title):
     # reset figure, make it square
     plt.figure(figsize=(8,8))

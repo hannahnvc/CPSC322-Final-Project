@@ -1,4 +1,5 @@
 import mysklearn.myutils as myutils
+import mysklearn.myevaluation as myevaluation
 import copy
 import random
 
@@ -468,33 +469,62 @@ class MyRandomForest():
         """ 
         self.y_train = None
         self.X_train = None
+        self.forest = []
+        self.full_forest = []
+        self.table = []
+        self.header = []
 
-    def fit(self, X_train, y_train):
+    def fit(self, X_train, y_train, N, M, F, header):
         self.y_train = y_train
         self.X_train = X_train
-        self.forest = []
+        self.table = [X_train[i] + [y_train[i]] for i in range(len(X_train))]
+        self.header = header
 
-        DecisionTree = MyDecisionTreeClassifier()
-        test_set_indices, remainder_set_indices = myevaluation.stratified_test_remainder(X_train, y_train)
-
-        remainder_set = []
-        for item in remainder_set_indices:
-            remainder_set.append(X_train[item])
-
+        # list of performance stats, parallel with full_forest
+        performance = []
         for i in range(N):
+            DecisionTree = MyDecisionTreeClassifier()
+            # get subset of columns
+            att_indexes = list(range(len(header)))
+            subset = myutils.compute_random_subset(att_indexes, F)
+            subset.append(len(header))
+            X_subset = []
+            
+            for i in range(len(self.table)):
+                new_row = []
+                for j in range(len(self.table[0])):
+                    for index in subset:
+                        if j == index:
+                            new_row.append(self.table[i][j])
+                X_subset.append(new_row)
+
+            
             # get 67% of remainder set for sample
-            sample = myutils.compute_bootstrapped_sample(remainder_set)
-            X_sample, y_sample = myutils.separate_data_from_class(sample, class_label)
-             
+            sample = myutils.compute_bootstrapped_sample(X_subset)
+            X_sample, y_sample = myutils.separate_data_from_class(sample)
+            
+           
             # get remaining 33% for validation
             validation = []
-            for item in remainder_set not in sample:
-                validation.append(item)
+            for item in X_subset:
+                if item not in X_sample:
+                    validation.append(item)
+            #print("validation", validation)
+            X_test, y_test = myutils.separate_data_from_class(validation)
+            DecisionTree.fit(X_sample, y_sample)
+            self.full_forest.append(DecisionTree)
 
-            DecisionTree.fit(sample)
-            forest.append(DecisionTree.tree)
+            predictions = DecisionTree.predict(X_test)
+            percent_correct = myutils.get_percent_correct(predictions, y_test)
+            performance.append(percent_correct)
         
-        return forest
+        # get M best trees in full_forest and append to forest
+        for i in range(M):
+            best_index = performance.index(max(performance))
+            self.forest.append(self.full_forest[best_index])
+            del performance[best_index]
+            del self.full_forest[best_index]
+
 
     def predict(self, X_test):
         """Makes predictions for test instances in X_test.
@@ -506,6 +536,13 @@ class MyRandomForest():
         Returns:
             y_predicted(list of obj): The predicted target y values (parallel to X_test)
         """
-        
-
+        y_predicted = []
+        for X in X_test:
+            predictions = []
+            for decision_tree in self.forest:
+                prediction = decision_tree.predict([X])
+                predictions.append(prediction[0])
+            majority_vote = myutils.most_frequent(predictions)
+            y_predicted.append(majority_vote)
         return y_predicted
+

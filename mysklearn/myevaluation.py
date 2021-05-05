@@ -156,19 +156,17 @@ def stratified_test_remainder(X, y, n_splits=3, shuffle=True):
 
     # shuffle the indices
     for item in y_indices:
-        shuffled = random.shuffle(y_indices[item])
-        y_indices[item] = shuffled
+        random.shuffle(y_indices[item])
     
     # put indices in sets with 1/3 in test and 2/3 in remainder 
     for item in y_indices:
-        for i in range(len(y_indices[item]) / n_splits):
+        for i in range(int(len(y_indices[item]) / n_splits)):
             test_set.append(y_indices[item][i])
-        for i in range(len(y_indices[item]) / n_splits, len(y_indices[item])):
+        for i in range(int(len(y_indices[item]) / n_splits), len(y_indices[item])):
             remainder_set.append(y_indices[item][i])
+      
     
     return test_set, remainder_set
-
-    return X_train_folds, X_test_folds
 
 def confusion_matrix(y_true, y_pred, labels):
     """Compute confusion matrix to evaluate the accuracy of a classification.
@@ -200,8 +198,10 @@ def confusion_matrix(y_true, y_pred, labels):
             row.append(0)
         for i in range(len(y_true)):
             if y_true[i] == label:
-                row[index_dict[y_pred[i]]] += 1
+                if y_pred[i] == None:
+                    pass
+                else:
+                    row[index_dict[y_pred[i]]] += 1
         matrix.append(row)
-
 
     return matrix

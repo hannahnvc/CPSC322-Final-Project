@@ -11,6 +11,17 @@ def create_dictionary(lst):
             freq_lst[item] = 1
     return freq_lst
 
+def create_dictionary_labels(lst, labels):
+    freq_lst = {}
+    for item in labels:
+        freq_lst[item] = 0
+    for item in lst:
+        if item == None:
+            pass
+        else:
+            freq_lst[item] += 1
+    return freq_lst
+
 def all_same_class(instances):
     #print(instances)
     # assumption: instances is not empty and class label is at index -1
@@ -75,6 +86,7 @@ def partition_instances(instances, split_attribute, attribute_domains, header):
     # lets build a dictionary
     partitions = {} # key (attribute value): value (list of instances with this attribute value)
     # task: try this!
+    
     attribute_domain.sort()
     for attribute_value in attribute_domain:
         partitions[attribute_value] = []
@@ -254,6 +266,7 @@ def avg_votes_to_categorical(table, index):
     for row in table:
         item = row[index]
         row[index] = math.floor(item)
+        
 
 def num_ratings_to_categorical(table, index):
     for row in table:
@@ -274,11 +287,11 @@ def num_ratings_to_categorical(table, index):
             row[index] = 6
         elif item >= 50000:
             row[index] = 5
-        elif item >= 25000:
-            row[index] = 4
-        elif item >= 10000:
+        elif item >= 2500:
             row[index] = 3
-        elif item >= 5000:
+        elif item >= 1000:
+            row[index] = 3
+        elif item >= 100:
             row[index] = 2
         else:
             row[index] = 1
@@ -468,28 +481,27 @@ def tdidt(current_instances, available_attributes, attribute_domains, header):
         #    CASE 1: all class labels of the partition are the same => make a leaf node
         if len(partition) > 0 and all_same_class(partition):
             #print(all_same_class(partition))
-            print("CASE 1")
+            #print("CASE 1")
             leaf = ["Leaf", partition[0][-1], len(partition), len(current_instances)]
             value_subtree.append(leaf)
             tree.append(value_subtree)
         #    CASE 2: no more attributes to select (clash) => handle clash w/majority vote leaf node
         elif len(partition) > 0 and len(available_attributes) == 0:
-            print("CASE 2")
+            #print("CASE 2")
             choice, num = compute_partition_stats(partition, split_attribute, header)
             leaf = ["Leaf", choice, num, len(current_instances)]
             value_subtree.append(leaf)
             tree.append(value_subtree)
         #    CASE 3: no more instances to partition (empty partition) => backtrack and replace attribute node with majority vote leaf node
         elif len(partition) == 0:
-            print("CASE 3")
+            #print("CASE 3")
             return None
         else: # all base cases are false... recurse!!
             subtree = tdidt(partition, available_attributes.copy(), attribute_domains, header)
             if subtree is None:
-                print("subtree is None")
                 # create leaf 
                 choice, num = compute_partition_stats(partition, split_attribute, header)
-                print(choice)
+             
                 leaf = ["Leaf", choice, num, len(current_instances)]
                 value_subtree.append(leaf)
             else:
@@ -518,7 +530,7 @@ def tdidt_predict(header, tree, instance):
 def compute_bootstrapped_sample(table):
     n = len(table)
     sample = []
-    for _ in range(n):
+    for i in range(int(n * .66)):
         rand_index = random.randrange(0, n)
         sample.append(table[rand_index])
     return sample
@@ -528,17 +540,31 @@ def compute_random_subset(values, num_values):
     random.shuffle(shuffled)
     return sorted(shuffled[:num_values])
 
-def separate_data_from_class(table, class_index):
+def separate_data_from_class(table):
     X = []
     y = []
+    class_index = len(table[0]) - 1
     for row in table:
         X_row = []
-        y_row = []
         for i in range(len(row)):
             if i == class_index:
-                y_row.append(row[i])
+                y.append(row[i])
             else:
                 X_row.append(row[i])
         X.append(X_row)
-        y.append(y_row)
     return X, y
+
+def get_percent_correct(predict, actual):
+    correct = 0
+    for i in range(len(predict)):
+        if predict[i] == actual[i]:
+            correct += 1
+    return correct / len(predict) 
+
+def most_frequent(lst):
+    # deal with "none" results
+    lst2 = ["Snubbed", "Nominee"]
+    for i in range(len(lst)):
+        if lst[i] != None:
+            lst2.append(lst[i])
+    return max(set(lst2), key = lst2.count)
